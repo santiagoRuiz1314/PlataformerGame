@@ -107,5 +107,9 @@ public class New_Character : MonoBehaviour
         animator?.SetBool("IsGrounded", IsGrounded);
         animator?.SetFloat("VerticalSpeed", velocity.y);
     }
+    public void SetExternalVelocity(Vector3 platformVelocity)
+    {
+        externalVelocity = platformVelocity;
+    }
    
 }
