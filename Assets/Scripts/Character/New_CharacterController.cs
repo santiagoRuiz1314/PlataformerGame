@@ -9,6 +9,8 @@ public class New_Character : MonoBehaviour
     public float jumpHeight = 2f;
     public float rotationSpeed = 10f;
     public float gravity = -20f;
+    // Lo controla PlayerPowerUps. 1 = velocidad normal.
+    [HideInInspector] public float SpeedMultiplier = 1f;
 
     [Header("Ejes (LN2 - cámara con rotación Y=-90)")]
     [Tooltip("Si está activo, el input vertical mueve al personaje en profundidad (X mundo).")]
@@ -66,7 +68,7 @@ public class New_Character : MonoBehaviour
             moveDirection = inputDirection;
             lastMoveDirection = inputDirection;
             bool isSprinting = Input.GetKey(KeyCode.LeftShift);
-            currentSpeed = isSprinting ? SprintSpeed : WalkSpeed;
+            currentSpeed = (isSprinting ? SprintSpeed : WalkSpeed) * SpeedMultiplier;
         }
 
         if (Input.GetButtonDown("Jump") && IsGrounded)

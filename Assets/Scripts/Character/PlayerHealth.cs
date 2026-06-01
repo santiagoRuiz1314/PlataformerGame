@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// Sistema de vidas del jugador.
@@ -16,6 +17,8 @@ public class PlayerHealth : MonoBehaviour
     [Header("Vidas")]
     [Tooltip("Cantidad de vidas con la que empieza el jugador.")]
     [SerializeField] private int maxLives = 3;
+    [Tooltip("Tope absoluto de vidas, contando las extra de power-up.")]
+    [SerializeField] private int absoluteMaxLives = 5;
 
     [Header("Respawn")]
     [Tooltip("Punto al que vuelve el jugador al recibir un golpe (si aún le quedan vidas). Arrastra aquí el objeto 'Respawn'.")]
@@ -32,6 +35,10 @@ public class PlayerHealth : MonoBehaviour
     private int currentLives;
     private float invulnerableTimer;
     private CharacterController characterController;
+    private bool isShielded;
+    private Coroutine shieldRoutine;
+    public bool IsShielded => isShielded;
+    public event Action<bool> OnShieldChanged; // opcional, para HUD/VFX
 
     // --- Propiedades de solo lectura ---
     public int CurrentLives => currentLives;
@@ -77,7 +84,7 @@ public class PlayerHealth : MonoBehaviour
     /// </summary>
     public bool TakeDamage()
     {
-        if (IsInvulnerable || IsDead) return false;
+        if (IsInvulnerable || IsShielded || IsDead) return false;
 
         currentLives--;
         OnLivesChanged?.Invoke(currentLives, maxLives);
@@ -99,7 +106,9 @@ public class PlayerHealth : MonoBehaviour
         }
 
         return true;
+
     }
+    
 
     /// <summary>
     /// Se queda sin vidas: Game Over.
@@ -136,5 +145,35 @@ public class PlayerHealth : MonoBehaviour
         if (characterController != null) characterController.enabled = true;
 
         Debug.Log("[PlayerHealth] Jugador devuelto al punto de respawn.");
+    }
+    /// <summary>Suma vidas (power-up de vida extra). Respeta el tope absoluto.</summary>
+    public bool AddLife(int amount = 1)
+    {
+        if (IsDead) return false;
+        if (currentLives >= absoluteMaxLives) return false;
+
+        currentLives = Mathf.Min(currentLives + amount, absoluteMaxLives);
+        OnLivesChanged?.Invoke(currentLives, maxLives);
+        Debug.Log($"[PlayerHealth] +{amount} vida. Vidas: {currentLives}");
+        return true;
+    }
+
+    /// <summary>Activa el escudo (invulnerabilidad temporal) por 'duration' segundos.</summary>
+    public void ActivateShield(float duration)
+    {
+        if (shieldRoutine != null) StopCoroutine(shieldRoutine);
+        shieldRoutine = StartCoroutine(ShieldRoutine(duration));
+    }
+
+    private IEnumerator ShieldRoutine(float duration)
+    {
+        isShielded = true;
+        OnShieldChanged?.Invoke(true);
+
+        yield return new WaitForSeconds(duration);
+
+        isShielded = false;
+        OnShieldChanged?.Invoke(false);
+        shieldRoutine = null;
     }
 }
