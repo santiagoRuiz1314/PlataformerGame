@@ -118,13 +118,19 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Aquí decides qué pasa al tocar al jugador.
-            // Opción simple: lo mandamos al Respawn de la escena.
             Debug.Log("[EnemyPatrol] El enemigo tocó al jugador.");
 
-            // EJEMPLO (descomenta y adapta al sistema de respawn que uses):
-            // GameObject respawn = GameObject.Find("Respawn");
-            // if (respawn != null) other.transform.position = respawn.transform.position;
+            // Buscamos el sistema de vidas del jugador y le aplicamos un golpe.
+            // GetComponentInParent por si el collider está en un hijo del jugador.
+            PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
+            if (health != null)
+            {
+                health.TakeDamage(); // quita una vida (y respawnea si está configurado)
+            }
+            else
+            {
+                Debug.LogWarning("[EnemyPatrol] El jugador no tiene el componente PlayerHealth.", this);
+            }
         }
     }
 
