@@ -514,6 +514,57 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.009999999, y: 0.029233593, z: 0.016199598}
   m_Center: {x: 0.000000011175871, y: 0.000000052154064, z: 0.000000011175871}
+--- !u!1 &214661762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 214661764}
+  - component: {fileID: 214661763}
+  m_Layer: 0
+  m_Name: IntroDialogue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &214661763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214661762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c4b7097b706e4da387f3667029067e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  introText: "Un viejo Maestro dej\xF3 tres pruebas en el sal\xF3n. El alumno debe
+    seguir los acertijos para reunir el Libro, el Jarr\xF3n y la antorcha. Con la
+    llave, la puerta cede."
+  speakerName: 
+  portraitOverride: {fileID: 0}
+  startDelay: 0.5
+  onlyOnce: 0
+--- !u!4 &214661764
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214661762}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &223637712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 584609087501355474, guid: 66860e66526c54bc59b68d19dcb767b9, type: 3}
@@ -4985,6 +5036,7 @@ SceneRoots:
   - {fileID: 1729396661}
   - {fileID: 1993739611}
   - {fileID: 2142157690}
+  - {fileID: 214661764}
   - {fileID: 1436236652}
   - {fileID: 1920244046}
   - {fileID: 168595128}
