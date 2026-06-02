@@ -27,6 +27,13 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("ACTIVO: al perder una vida, el jugador vuelve al punto de respawn.\nINACTIVO: pierde la vida pero NO se mueve de donde está.")]
     [SerializeField] private bool respawnOnDeath = true;
 
+    [Header("Game Over (sin vidas)")]
+    [Tooltip("ACTIVO: al quedarse sin vidas, el jugador vuelve al respawn y recupera todas sus vidas para seguir jugando.\nINACTIVO: solo se lanza el evento OnGameOver y decides tú qué hacer.")]
+    [SerializeField] private bool respawnOnGameOver = true;
+
+    [Tooltip("Segundos de espera antes de devolver al jugador al respawn tras el Game Over (0 = inmediato).")]
+    [SerializeField] private float gameOverRespawnDelay = 1f;
+
     [Header("Invulnerabilidad")]
     [Tooltip("Segundos de invulnerabilidad tras un golpe. Evita perder varias vidas de un solo toque seguido.")]
     [SerializeField] private float invulnerabilityTime = 1.5f;
@@ -112,19 +119,46 @@ public class PlayerHealth : MonoBehaviour
 
     /// <summary>
     /// Se queda sin vidas: Game Over.
+    /// Si 'respawnOnGameOver' está activo, devuelve al jugador al punto de
+    /// respawn y le restaura todas las vidas para que pueda seguir jugando.
     /// </summary>
     private void Die()
     {
         Debug.Log("[PlayerHealth] ¡GAME OVER! El jugador se quedó sin vidas.");
         OnGameOver?.Invoke();
 
-        // Aquí decides qué hacer al perder. Ejemplos (descomenta el que quieras):
+        if (respawnOnGameOver)
+        {
+            StartCoroutine(GameOverRespawnRoutine());
+        }
+
+        // Si NO quieres que reviva y prefieres otra cosa al perder, desactiva
+        // 'respawnOnGameOver' en el Inspector y usa el evento OnGameOver, o
+        // descomenta aquí lo que necesites. Ejemplos:
         // -- Recargar la escena actual:
         // UnityEngine.SceneManagement.SceneManager.LoadScene(
         //     UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         //
         // -- Congelar el juego:
         // Time.timeScale = 0f;
+    }
+
+    /// <summary>
+    /// Espera un instante (opcional), lleva al jugador al respawn y le devuelve
+    /// todas las vidas. Avisa al HUD para que vuelvan a aparecer los corazones.
+    /// </summary>
+    private IEnumerator GameOverRespawnRoutine()
+    {
+        if (gameOverRespawnDelay > 0f)
+            yield return new WaitForSeconds(gameOverRespawnDelay);
+
+        MoveToRespawn();
+
+        currentLives = maxLives;
+        invulnerableTimer = invulnerabilityTime; // pequeño respiro al revivir
+        OnLivesChanged?.Invoke(currentLives, maxLives);
+
+        Debug.Log($"[PlayerHealth] Jugador reapareció con vidas completas: {currentLives}/{maxLives}");
     }
 
     /// <summary>
